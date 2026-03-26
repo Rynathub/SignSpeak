@@ -10,9 +10,22 @@
 		EB7436002F5F62D800E2F23D /* ASLRecognizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ASLRecognizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		EBA1F6F02F75EDAF00164636 /* Exceptions for "ASLRecognizer" folder in "ASLRecognizer" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = EB7435FF2F5F62D800E2F23D /* ASLRecognizer */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		EB7436022F5F62D800E2F23D /* ASLRecognizer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EBA1F6F02F75EDAF00164636 /* Exceptions for "ASLRecognizer" folder in "ASLRecognizer" target */,
+			);
 			path = ASLRecognizer;
 			sourceTree = "<group>";
 		};
@@ -33,6 +46,7 @@
 			isa = PBXGroup;
 			children = (
 				EB7436022F5F62D800E2F23D /* ASLRecognizer */,
+				EB7436262F60051E00E2F23D /* Frameworks */,
 				EB7436012F5F62D800E2F23D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +57,13 @@
 				EB7436002F5F62D800E2F23D /* ASLRecognizer.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		EB7436262F60051E00E2F23D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -251,8 +272,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UP69FPH7Y7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ASLRecognizer/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -282,8 +305,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UP69FPH7Y7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ASLRecognizer/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

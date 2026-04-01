@@ -7,15 +7,31 @@
 
 import SwiftUI
 
-struct DSButton: View {
-  let style: ButtonsStyle
-  let onTap: () -> Void
+struct DSButton<Label:View>: View {
+  let style: AppButtonVariant
+  let label: () -> Label
+  let action: () -> Void
   
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+      Button(action: action) {
+        label()
+      }
+      .buttonStyle(AppButtonStyle(variant: style))
     }
 }
 
 #Preview {
-  DSButton(style: .primary, onTap: {})
+  VStack(spacing: 36) {    
+    DSButton(style: .primary) {
+      Text("Get Started")
+    } action: {}
+    
+    DSButton(style: .secondary) {
+      Text("Get Started")
+    } action: {}
+    
+    DSButton(style: .text) {
+      Text("Get Started")
+    } action: {}
+  }
 }

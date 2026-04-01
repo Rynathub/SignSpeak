@@ -40,7 +40,7 @@ public enum AdaptiveDeviceCategory {
 }
 
 public struct Adaptive {
-  public func adaptive(_ standardValue: CGFloat) -> CGFloat {
+  public static func adaptive(_ standardValue: CGFloat) -> CGFloat {
     let scale = Self.scale(device: AdaptiveDeviceCategory.current)
     return (standardValue * scale).rounded()
   }

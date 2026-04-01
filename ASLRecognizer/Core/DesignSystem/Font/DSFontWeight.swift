@@ -12,8 +12,8 @@ public enum DSFontWeight {
   
   public var fontName: String {
     switch self {
-    case .regular: "Inter-Regula"
-    case .semibold: "Inter-SemiBold"
+    case .regular: "Inter-Regular"
+    case .semibold: "Inter-Regular_SemiBold"
     }
   }
 }

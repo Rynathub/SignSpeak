@@ -8,18 +8,20 @@
 import SwiftUI
 
 struct LaunchScreen<RootView: View, Logo: View>: Scene {
+  var config: LaunchScreenConfig = .init()
   @ViewBuilder var logo: () -> Logo
   @ViewBuilder var rootContent: RootView
   
   var body: some Scene {
     WindowGroup {
       rootContent
-        .modifier(LaunchScreenModifier(logo: logo))
+        .modifier(LaunchScreenModifier(config: config, logo: logo))
     }
   }
   
-  fileprivate struct LaunchScreenModifier<Logo: View>: ViewModifier {
-    @ViewBuilder var logo: Logo
+  fileprivate struct LaunchScreenModifier<LogoView: View>: ViewModifier {
+    var config: LaunchScreenConfig
+    @ViewBuilder var logo: () -> LogoView
     
     @Environment(\.scenePhase) private var scenePhase
     @State private var splashWindow: UIWindow?
@@ -35,24 +37,43 @@ struct LaunchScreen<RootView: View, Logo: View>: Scene {
               continue
             }
             
+            // Check if splash already exists for this scene
             if windowScene.windows.contains(where: { $0.tag == 1009 }) {
-              print("Already have a splash window for this scene")
+              print("[LaunchScreen] Already have a splash window for this scene")
               continue
             }
             
             let window = UIWindow(windowScene: windowScene)
+            window.tag = 1009
             window.backgroundColor = .clear
+            window.windowLevel = .statusBar + 1 // Ensure it is above everything
             window.isHidden = false
             window.isUserInteractionEnabled = true
             
-            let rootViewController = UIHostingController(rootView: LaunchScreenView {
-              logo
+            let rootViewController = UIHostingController(rootView: LaunchScreenView(config: config) {
+              logo()
             })
             rootViewController.view.backgroundColor = .clear
             window.rootViewController = rootViewController
             
             self.splashWindow = window
-            print("Splash Window Added")
+            print("[LaunchScreen] Splash Window Added")
+            
+            // Departure Logic
+            let totalDelay = config.initialDelay + 1.0 // Buffer for entry animation
+            DispatchQueue.main.asyncAfter(deadline: .now() + totalDelay) {
+              UIView.animate(withDuration: config.animationDuration, delay: 0, options: .curveEaseOut, animations: {
+                window.alpha = 0
+                window.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+              }) { _ in
+                window.isHidden = true
+                window.windowScene = nil
+                if self.splashWindow == window {
+                  self.splashWindow = nil
+                }
+                print("[LaunchScreen] Splash Window Dismissed")
+              }
+            }
           }
         }
     }
@@ -71,12 +92,36 @@ struct LaunchScreen<RootView: View, Logo: View>: Scene {
   }
 }
 
+struct LaunchScreenConfig {
+  var initialDelay: Double = 1.0
+  var backgroundColor: Color = .black
+  var logoBackgroundColor: LinearGradient = LinearGradient.primaryGradient
+  var logoSize: CGFloat = 120
+  var animationDuration: CGFloat = 0.6
+}
+
 fileprivate struct LaunchScreenView<Logo: View>: View {
+  var config: LaunchScreenConfig
   @ViewBuilder var logo: Logo
+  
+  @State private var scale: CGFloat = 0.8
+  @State private var opacity: Double = 0
+  
   var body: some View {
     ZStack {
-      Color.white.ignoresSafeArea()
+      config.backgroundColor.ignoresSafeArea()
+      
       logo
+        .aspectRatio(contentMode: .fit)
+        .frame(width: config.logoSize, height: config.logoSize)
+        .scaleEffect(scale)
+        .opacity(opacity)
+    }
+    .onAppear {
+      withAnimation(.spring(response: 0.8, dampingFraction: 0.6, blendDuration: 0)) {
+        scale = 1.0
+        opacity = 1.0
+      }
     }
   }
 }

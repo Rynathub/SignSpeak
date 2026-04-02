@@ -10,10 +10,9 @@ import SwiftUI
 @main
 struct ASLRecognizerApp: App {
   var body: some Scene {
-    LaunchScreen {
-      Image(.icHand)
-    } rootContent: {
-      ContentView()
+    WindowGroup {
+      GetStartedScreen()
+        .preferredColorScheme(.light)
     }
   }
 }

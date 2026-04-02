@@ -23,6 +23,7 @@ struct AppButtonStyle: ButtonStyle {
     configuration.label
       .font(.inter(weight: .semibold, size: Adaptive.adaptive(16)))
       .foregroundStyle(foregroundColor)
+      .frame(maxWidth: .infinity)
       .padding(.vertical, verticalPadding)
       .padding(.horizontal, horizontalPadding)
       .background {

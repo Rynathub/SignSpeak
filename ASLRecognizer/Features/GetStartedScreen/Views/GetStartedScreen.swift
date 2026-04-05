@@ -63,17 +63,17 @@ struct GetStartedScreen: View {
   
   private var buttonsView: some View {
     VStack(spacing: Adaptive.adaptive(15)) {
-      DSButton(style: .primary) {
+      DSButton(style: .primary, width: .full) {
         Text("Get Started")
       } action: {
         
       }
       HStack() {
-        DSButton(style: .text) {
+        DSButton(style: .text, width: .full) {
           Text("How it works?")
             .font(.inter(weight: .semibold, size: Adaptive.adaptive(14)))
         } action: {}
-        DSButton(style: .text) {
+        DSButton(style: .text, width: .full) {
           Text("Settings")
             .font(.inter(weight: .semibold, size: Adaptive.adaptive(14)))
         } action: {}

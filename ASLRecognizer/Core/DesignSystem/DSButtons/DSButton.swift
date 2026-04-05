@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DSButton<Label:View>: View {
   let style: AppButtonVariant
+  let width: AppButtonWidth
   let label: () -> Label
   let action: () -> Void
   
@@ -16,21 +17,21 @@ struct DSButton<Label:View>: View {
       Button(action: action) {
         label()
       }
-      .buttonStyle(AppButtonStyle(variant: style))
+      .buttonStyle(AppButtonStyle(variant: style, width: width))
     }
 }
 
 #Preview {
   VStack(spacing: 36) {    
-    DSButton(style: .primary) {
+    DSButton(style: .primary, width: .fit) {
       Text("Get Started")
     } action: {}
     
-    DSButton(style: .secondary) {
+    DSButton(style: .secondary, width: .full) {
       Text("Get Started")
     } action: {}
     
-    DSButton(style: .text) {
+    DSButton(style: .text, width: .fit) {
       Text("Get Started")
     } action: {}
   }

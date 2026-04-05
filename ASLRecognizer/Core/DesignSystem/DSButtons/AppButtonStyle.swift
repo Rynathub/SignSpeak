@@ -14,16 +14,27 @@ enum AppButtonVariant {
   case text
 }
 
+enum AppButtonWidth {
+  case fit
+  case full
+}
+
 struct AppButtonStyle: ButtonStyle {
   let variant: AppButtonVariant
+  let width: AppButtonWidth
   
   @Environment(\.isEnabled) private var isEnabled
+  
+  init(variant: AppButtonVariant, width: AppButtonWidth = .full) {
+    self.variant = variant
+    self.width = width
+  }
   
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
       .font(.inter(weight: .semibold, size: Adaptive.adaptive(16)))
       .foregroundStyle(foregroundColor)
-      .frame(maxWidth: .infinity)
+      .frame(maxWidth: width == .full ? .infinity : nil)
       .padding(.vertical, verticalPadding)
       .padding(.horizontal, horizontalPadding)
       .background {

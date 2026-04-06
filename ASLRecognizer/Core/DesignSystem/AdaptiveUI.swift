@@ -17,8 +17,9 @@ public enum AdaptiveDeviceCategory {
   case proMax
   
   public static var current: AdaptiveDeviceCategory {
-    let width = UIScreen.main.bounds.width
-    let height = UIScreen.main.bounds.height
+    let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+    let width = windowScene?.screen.bounds.width ?? 390
+    let height = windowScene?.screen.bounds.height ?? 844
     
     switch width {
     case ..<380:

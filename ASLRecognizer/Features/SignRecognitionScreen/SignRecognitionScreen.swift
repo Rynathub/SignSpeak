@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct SignRecognitionScreen: View {
+  @StateObject private var viewModel = SignRecognitionScreenVM()
   @State private var isButtonDisabled = true
-  @State private var text: String = "dasdasdaadsdasdasdhjsadahdashddnasdjhasjhd"
+  @State private var text: String = ""
   
     var body: some View {
       contentView
@@ -17,10 +18,11 @@ struct SignRecognitionScreen: View {
     }
   
   private var contentView: some View {
-    VStack() {
+    VStack(spacing: 0) {
       header
       Spacer()
       cameraSection
+        .padding(.bottom, Adaptive.adaptive(16))
       outputCard
       Spacer()
       bottomButtons
@@ -33,17 +35,13 @@ struct SignRecognitionScreen: View {
         Image(.icHelp)
           .resizable()
           .frame(width: 24, height: 24)
-      } action: {
-        
-      }
+      } action: {}
       Spacer()
       DSButton(style: .text, width: .fit) {
         Image(.icSettings)
           .resizable()
           .frame(width: 24, height: 24)
-      } action: {
-        
-      }
+      } action: {}
     }
     .padding(.horizontal, Adaptive.adaptive(24))
     .padding(.bottom, Adaptive.adaptive(12))
@@ -54,9 +52,8 @@ struct SignRecognitionScreen: View {
   }
   
   private var cameraSection: some View {
-    RoundedRectangle(cornerRadius: 24)
-      .frame(width: 375,height: 450)
-      .padding()
+    CameraView(image: $viewModel.currentFrame)
+      .padding(.horizontal, Adaptive.adaptive(16))
   }
   
   private var outputCard: some View {

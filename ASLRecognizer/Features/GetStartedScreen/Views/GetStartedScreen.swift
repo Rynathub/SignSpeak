@@ -8,10 +8,17 @@
 import SwiftUI
 
 struct GetStartedScreen: View {
-  var body: some View {
-    contentView
-  }
+  @State private var navigateToCamera = false
   
+  var body: some View {
+    NavigationStack {
+      contentView
+        .navigationDestination(isPresented: $navigateToCamera) {
+          SignRecognitionScreen()
+            .navigationBarBackButtonHidden(true)
+        }
+    }
+  }
   private var contentView: some View{
     VStack(spacing: 0) {
       logoView
@@ -66,7 +73,7 @@ struct GetStartedScreen: View {
       DSButton(style: .primary, width: .full) {
         Text("Get Started")
       } action: {
-        
+        navigateToCamera = true
       }
       HStack() {
         DSButton(style: .text, width: .full) {

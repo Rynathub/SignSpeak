@@ -52,7 +52,11 @@ struct SignRecognitionScreen: View {
   }
   
   private var cameraSection: some View {
-    CameraView(image: $viewModel.currentFrame)
+    CameraView(
+      image: $viewModel.currentFrame,
+      hands: viewModel.hands,
+      connectionPairs: SignRecognitionScreenVM.connectionPairs
+    )
       .padding(.horizontal, Adaptive.adaptive(16))
   }
   

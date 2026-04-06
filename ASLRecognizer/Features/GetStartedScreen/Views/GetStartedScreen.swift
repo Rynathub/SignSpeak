@@ -33,7 +33,6 @@ struct GetStartedScreen: View {
   }
   
   private var logoView: some View {
-    
     Image(.icHand)
       .renderingMode(.template)
       .resizable()

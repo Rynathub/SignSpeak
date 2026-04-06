@@ -8,6 +8,7 @@
 import Foundation
 import AVFoundation
 import CoreImage
+import Vision
 
 class CameraService: NSObject {
   private let captureSession = AVCaptureSession()
@@ -15,15 +16,19 @@ class CameraService: NSObject {
   private let systemPreferredCamera = AVCaptureDevice.default(for: .video)
   private var sessionQueue = DispatchQueue(label: "video.preview.session")
   
+  // MARK: - Hand Pose Detection
+  private let handPoseRequest: VNDetectHumanHandPoseRequest = {
+    let request = VNDetectHumanHandPoseRequest()
+    request.maximumHandCount = 2
+    return request
+  }()
+  
   private var isAuthorized: Bool {
     get async {
       let status = AVCaptureDevice.authorizationStatus(for: .video)
       
-      // Determine if the user previously authorized camera access.
       var isAuthorized = status == .authorized
       
-      // If the system hasn't determined the user's authorization status,
-      // explicitly prompt them for approval.
       if status == .notDetermined {
         isAuthorized = await AVCaptureDevice.requestAccess(for: .video)
       }
@@ -32,6 +37,7 @@ class CameraService: NSObject {
     }
   }
   
+  // MARK: - Streams
   private var addToPreviewStream: ((CGImage) -> Void)?
   
   lazy var previewStream: AsyncStream<CGImage> = {
@@ -42,6 +48,15 @@ class CameraService: NSObject {
     }
   }()
   
+  private var addToHandPoseStream: (([VNHumanHandPoseObservation]) -> Void)?
+  
+  lazy var handPoseStream: AsyncStream<[VNHumanHandPoseObservation]> = {
+    AsyncStream { continuation in
+      addToHandPoseStream = { observations in
+        continuation.yield(observations)
+      }
+    }
+  }()
   
   override init() {
     super.init()
@@ -81,29 +96,40 @@ class CameraService: NSObject {
     captureSession.addOutput(videoOutput)
     
     if let connection = videoOutput.connection(with: .video) {
-        if #available(iOS 17.0, *) {
-            if connection.isVideoRotationAngleSupported(90) {
-                connection.videoRotationAngle = 90
-            }
-        } else {
-            if connection.isVideoOrientationSupported {
-                connection.videoOrientation = .portrait
-            }
+      if #available(iOS 17.0, *) {
+        if connection.isVideoRotationAngleSupported(90) {
+          connection.videoRotationAngle = 90
         }
+      } else {
+        if connection.isVideoOrientationSupported {
+          connection.videoOrientation = .portrait
+        }
+      }
     }
   }
   
   private func startSession() async {
     guard await isAuthorized else { return }
     Task.detached {
-      await self.captureSession.startRunning()
+      self.captureSession.startRunning()
     }
   }
 }
 
 extension CameraService: AVCaptureVideoDataOutputSampleBufferDelegate {
   func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+    // 1. Send frame to preview
     guard let currentFrame = sampleBuffer.cgImage else { return }
     addToPreviewStream?(currentFrame)
+    
+    // 2. Run hand pose detection
+    let handler = VNImageRequestHandler(cmSampleBuffer: sampleBuffer, orientation: .up, options: [:])
+    do {
+      try handler.perform([handPoseRequest])
+      let observations = handPoseRequest.results ?? []
+      addToHandPoseStream?(observations)
+    } catch {
+      print("Vision hand pose request failed: \(error)")
+    }
   }
 }

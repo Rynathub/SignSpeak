@@ -9,10 +9,20 @@ import SwiftUI
 
 @main
 struct ASLRecognizerApp: App {
+  @State private var showGetStarted = true
+  
   var body: some Scene {
     WindowGroup {
-      GetStartedScreen()
+      SignRecognitionScreen()
         .preferredColorScheme(.light)
+        .fullScreenCover(isPresented: $showGetStarted) {
+          GetStartedScreen {
+            withAnimation(.easeInOut(duration: 0.4)) {
+              showGetStarted = false
+            }
+          }
+          .preferredColorScheme(.light)
+        }
     }
   }
 }

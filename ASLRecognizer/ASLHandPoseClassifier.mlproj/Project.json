@@ -1,0 +1,29 @@
+{
+  "activityEntities" : [
+    "projectCreated",
+    [
+      {
+        "createdDate" : "2026-04-06T20:47:47Z",
+        "event" : "projectCreated",
+        "id" : "48CF1556-086D-4C4F-935E-E35F928395EF",
+        "subtitle" : "ASLHandPoseClassifier",
+        "title" : "Project Created"
+      }
+    ]
+  ],
+  "authorName" : "Rynat Shakirov",
+  "createdDate" : "2026-04-06T20:47:47Z",
+  "description" : "",
+  "id" : "B109BC27-E95F-49B0-96B0-6E6360F5C8CC",
+  "license" : "",
+  "location" : "",
+  "modifiedDate" : "2026-04-06T20:47:47Z",
+  "projectName" : "ASLHandPoseClassifier",
+  "settingsEntity" : {
+    "snapshotOnExtendTraining" : true,
+    "snapshotOnResumeTraining" : false
+  },
+  "taskType" : "handPoseClassifier",
+  "title" : "Hand Pose Classification",
+  "version" : "1.1"
+}

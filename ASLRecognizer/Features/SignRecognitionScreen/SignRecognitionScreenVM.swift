@@ -12,11 +12,25 @@ import Vision
 
 class SignRecognitionScreenVM: ObservableObject {
   
+  // MARK: - Published State
   @Published var currentFrame: CGImage?
   @Published var handDetected: Bool = false
   @Published var hands: [[String: CGPoint]] = []
   
+  // Classification output
+  @Published var recognizedText: String = ""
+  @Published var currentLetter: String = ""
+  @Published var confidence: Double = 0.0
+  
+  // MARK: - Private
   private let cameraService = CameraService()
+  private let classifier = SignClassifier()
+  
+  // Stability buffer: stores recent predictions
+  private var predictionBuffer: [String] = []
+  private let bufferSize = 15
+  private let stabilityThreshold = 10  // Must appear ≥10 times in buffer to register
+  private var lastCommittedLabel: String? = nil
   
   // Pairs of joints to connect with lines (skeleton)
   static let connectionPairs: [(String, String)] = [
@@ -51,12 +65,104 @@ class SignRecognitionScreenVM: ObservableObject {
   
   func handleHandPose() async {
     for await observations in cameraService.handPoseStream {
+      // 1. Extract joint positions for skeleton overlay
       let results = Self.extractAllHands(from: observations)
+      
+      // 2. Classify the first detected hand
+      var label = ""
+      var conf = 0.0
+      
+      if let firstObservation = observations.first,
+         let classifier = classifier,
+         let result = classifier.classify(firstObservation) {
+        label = result.label
+        conf = result.confidence
+      }
+      
+      // 3. Process through stability buffer
+      let committedLetter = processStabilityBuffer(label: label)
+      
+      // 4. Update UI on main thread
       Task { @MainActor in
         handDetected = !observations.isEmpty
         hands = results
+        
+        if !label.isEmpty && label != "nothing" {
+          currentLetter = label.uppercased()
+          confidence = conf
+        } else {
+          currentLetter = ""
+          confidence = 0.0
+        }
+        
+        // Append committed letter to recognized text
+        if let letter = committedLetter {
+          applyLetter(letter)
+        }
       }
     }
+  }
+  
+  // MARK: - Stability Buffer
+  
+  /// Adds a prediction to the buffer and returns a committed letter if stable
+  private func processStabilityBuffer(label: String) -> String? {
+    // Ignore "nothing" — don't add to buffer, but reset tracking
+    guard !label.isEmpty, label != "nothing" else {
+      predictionBuffer.removeAll()
+      lastCommittedLabel = nil
+      return nil
+    }
+    
+    // Add to buffer
+    predictionBuffer.append(label)
+    
+    // Keep buffer at fixed size
+    if predictionBuffer.count > bufferSize {
+      predictionBuffer.removeFirst()
+    }
+    
+    // Count occurrences of the most frequent label
+    let counts = Dictionary(grouping: predictionBuffer, by: { $0 })
+      .mapValues { $0.count }
+    
+    guard let (topLabel, topCount) = counts.max(by: { $0.value < $1.value }),
+          topCount >= stabilityThreshold else {
+      return nil
+    }
+    
+    // Don't commit the same letter twice in a row
+    guard topLabel != lastCommittedLabel else {
+      return nil
+    }
+    
+    // Commit!
+    lastCommittedLabel = topLabel
+    predictionBuffer.removeAll()
+    return topLabel
+  }
+  
+  // MARK: - Text Manipulation
+  
+  @MainActor
+  private func applyLetter(_ letter: String) {
+    switch letter.lowercased() {
+    case "space":
+      recognizedText.append(" ")
+    case "del":
+      if !recognizedText.isEmpty {
+        recognizedText.removeLast()
+      }
+    default:
+      recognizedText.append(letter.uppercased())
+    }
+  }
+  
+  @MainActor
+  func clearText() {
+    recognizedText = ""
+    predictionBuffer.removeAll()
+    lastCommittedLabel = nil
   }
   
   /// Extracts all 21 joint points for each detected hand

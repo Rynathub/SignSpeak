@@ -8,18 +8,20 @@
 import SwiftUI
 
 struct GetStartedScreen: View {
-  @State private var navigateToCamera = false
+  var onGetStarted: () -> Void
+  
+  @State private var navigateToTutorial = false
   
   var body: some View {
     NavigationStack {
       contentView
-        .navigationDestination(isPresented: $navigateToCamera) {
-          SignRecognitionScreen()
-            .navigationBarBackButtonHidden(true)
+        .navigationDestination(isPresented: $navigateToTutorial) {
+          TutorialScreen(onStartAction: onGetStarted)
         }
     }
   }
-  private var contentView: some View{
+  
+  private var contentView: some View {
     VStack(spacing: 0) {
       logoView
       textView
@@ -36,7 +38,7 @@ struct GetStartedScreen: View {
     Image(.icHand)
       .renderingMode(.template)
       .resizable()
-      .frame(width: Adaptive.adaptive(48),height: Adaptive.adaptive(48) )
+      .frame(width: Adaptive.adaptive(48), height: Adaptive.adaptive(48))
       .foregroundStyle(.white)
       .padding(Adaptive.adaptive(24))
       .background {
@@ -72,13 +74,15 @@ struct GetStartedScreen: View {
       DSButton(style: .primary, width: .full) {
         Text("Get Started")
       } action: {
-        navigateToCamera = true
+        onGetStarted()
       }
       HStack() {
         DSButton(style: .text, width: .full) {
           Text("How it works?")
             .font(.inter(weight: .semibold, size: Adaptive.adaptive(14)))
-        } action: {}
+        } action: {
+          navigateToTutorial = true
+        }
         DSButton(style: .text, width: .full) {
           Text("Settings")
             .font(.inter(weight: .semibold, size: Adaptive.adaptive(14)))
@@ -90,5 +94,5 @@ struct GetStartedScreen: View {
 }
 
 #Preview {
-  GetStartedScreen()
+  GetStartedScreen(onGetStarted: {})
 }

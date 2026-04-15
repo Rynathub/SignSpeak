@@ -59,11 +59,13 @@ struct DSSettingsRow: View {
             .foregroundStyle(.gray6)
         }
       }
+      .layoutPriority(1)
       
       Spacer(minLength: 4)
       
       // Accessory (right side)
       accessoryView
+        .fixedSize()
     }
     .padding(.horizontal, Adaptive.adaptive(12))
     .padding(.vertical, Adaptive.adaptive(14))

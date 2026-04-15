@@ -55,6 +55,16 @@ class SignRecognitionScreenVM: ObservableObject {
     }
   }
   
+  // MARK: - Lifecycle Controls
+  
+  func startCamera() {
+    cameraService.start()
+  }
+  
+  func stopCamera() {
+    cameraService.stop()
+  }
+  
   func handleCameraPreviews() async {
     for await image in cameraService.previewStream {
       Task { @MainActor in
@@ -77,6 +87,11 @@ class SignRecognitionScreenVM: ObservableObject {
          let result = classifier.classify(firstObservation) {
         label = result.label
         conf = result.confidence
+      }
+      
+      // 2.5 Filter by confidence if setting is enabled
+      if AppSettingsService.shared.highConfidenceOnly && conf < 0.9 {
+        label = ""
       }
       
       // 3. Process through stability buffer
@@ -155,6 +170,10 @@ class SignRecognitionScreenVM: ObservableObject {
       }
     default:
       recognizedText.append(letter.uppercased())
+    }
+    
+    if AppSettingsService.shared.hapticFeedbackOn {
+      UIImpactFeedbackGenerator(style: .soft).impactOccurred()
     }
   }
   

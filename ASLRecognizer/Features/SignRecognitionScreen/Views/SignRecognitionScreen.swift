@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct SignRecognitionScreen: View {
+  @Environment(\.scenePhase) private var scenePhase
   @StateObject private var viewModel = SignRecognitionScreenVM()
-
   @State private var showTutorial = false
   @State private var showSettings = false
   
@@ -22,11 +22,31 @@ struct SignRecognitionScreen: View {
           }
           .toolbar(.hidden, for: .navigationBar)
           .navigationDestination(isPresented: $showSettings, destination: {
-            SettingsScreen()
+            SettingsScreen(isPresented: $showSettings)
           })
           .toolbar(.hidden, for: .navigationBar)
       }
+      .onAppear {
+        updateCameraState()
+      }
+      .onChange(of: showSettings) { _ in updateCameraState() }
+      .onChange(of: showTutorial) { _ in updateCameraState() }
+      .onChange(of: scenePhase) { newPhase in
+        if newPhase == .active {
+          updateCameraState()
+        } else {
+          viewModel.stopCamera()
+        }
+      }
     }
+    
+  private func updateCameraState() {
+    if showSettings || showTutorial {
+      viewModel.stopCamera()
+    } else {
+      viewModel.startCamera()
+    }
+  }
   
   private var contentView: some View {
     VStack(spacing: 0) {

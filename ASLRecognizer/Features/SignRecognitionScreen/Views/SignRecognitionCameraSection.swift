@@ -7,7 +7,8 @@ struct SignRecognitionCameraSection: View {
     CameraView(
       image: $viewModel.currentFrame,
       hands: viewModel.hands,
-      connectionPairs: SignRecognitionScreenVM.connectionPairs
+      connectionPairs: SignRecognitionScreenVM.connectionPairs,
+      showOverlay: AppSettingsService.shared.showHandsOverlay
     )
     .overlay(alignment: .topTrailing) {
       if !viewModel.currentLetter.isEmpty {

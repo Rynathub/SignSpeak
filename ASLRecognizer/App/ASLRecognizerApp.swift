@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct ASLRecognizerApp: App {
+  @StateObject private var settingsService = AppSettingsService.shared
   @State private var showGetStarted = true
   
   var body: some Scene {
@@ -23,6 +24,7 @@ struct ASLRecognizerApp: App {
           }
           .preferredColorScheme(.light)
         }
+        .environmentObject(settingsService)
     }
   }
 }

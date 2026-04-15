@@ -63,7 +63,22 @@ class CameraService: NSObject {
     
     Task {
       await configureSession()
-      await startSession()
+    }
+  }
+  
+  // MARK: - Public Controls
+  
+  func start() {
+    guard !captureSession.isRunning else { return }
+    sessionQueue.async {
+      self.captureSession.startRunning()
+    }
+  }
+  
+  func stop() {
+    guard captureSession.isRunning else { return }
+    sessionQueue.async {
+      self.captureSession.stopRunning()
     }
   }
   
@@ -105,13 +120,6 @@ class CameraService: NSObject {
           connection.videoOrientation = .portrait
         }
       }
-    }
-  }
-  
-  private func startSession() async {
-    guard await isAuthorized else { return }
-    Task.detached {
-      self.captureSession.startRunning()
     }
   }
 }

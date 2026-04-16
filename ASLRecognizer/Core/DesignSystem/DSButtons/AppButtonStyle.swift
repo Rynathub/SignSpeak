@@ -35,6 +35,8 @@ struct AppButtonStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
       .font(.inter(weight: .semibold, size: Adaptive.adaptive(16)))
+      .lineLimit(1)
+      .minimumScaleFactor(0.7)
       .foregroundStyle(foregroundColor)
       .frame(maxWidth: width == .full ? .infinity : nil)
       .padding(.vertical, verticalPadding)

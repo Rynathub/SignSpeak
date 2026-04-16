@@ -14,6 +14,7 @@ class AppSettingsService: ObservableObject {
   @AppStorage("showHandsOverlay") var showHandsOverlay = false
   @AppStorage("hapticFeedbackOn") var hapticFeedbackOn = false
   @AppStorage("highConfidenceOnly") var highConfidenceOnly = false
+  @AppStorage("appLanguage") var appLanguage = ""
   
   let appVersion = UIApplication.appVersion ?? "5.0.0"
   

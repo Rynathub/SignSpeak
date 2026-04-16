@@ -9,8 +9,8 @@ import SwiftUI
 
 struct TutorialStepView: View {
   let stepNumber: Int
-  let title: String
-  let description: String
+  let title: LocalizedStringKey
+  let description: LocalizedStringKey
   let icon: ImageResource
   let iconColor: Color
   

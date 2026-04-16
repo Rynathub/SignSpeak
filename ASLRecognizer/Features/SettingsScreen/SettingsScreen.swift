@@ -13,6 +13,15 @@ struct SettingsScreen: View {
   @StateObject private var viewModel = SettingsScreenVM()
   @State var isOn: Bool = false
   @State private var showTutorial = false
+  @State private var showLanguageSheet = false
+  
+  private var currentLanguageTitle: LocalizedStringKey {
+    switch appSettingsService.appLanguage {
+    case "en": return "English"
+    case "uk": return "Українська"
+    default: return "System Default"
+    }
+  }
   
   var body: some View {
     ScrollView {
@@ -28,7 +37,7 @@ struct SettingsScreen: View {
         ])
         
         SettingsSection(title: "Appearance", settingsItems:[
-          SettingsItem(style: .navigation, icon: .icLanguage, title: "Language", subTitle: "English", action: {}),
+          SettingsItem(style: .navigation, icon: .icLanguage, title: "Language", subTitle: currentLanguageTitle, action: { showLanguageSheet = true }),
         ])
         
         SettingsSection(title: "About", settingsItems:[
@@ -65,6 +74,60 @@ struct SettingsScreen: View {
         showTutorial = false
         isPresented = false
       })
+    }
+    .sheet(isPresented: $showLanguageSheet) {
+      LanguageSelectionSheet(isPresented: $showLanguageSheet)
+        .presentationDetents([.height(250)])
+        .presentationDragIndicator(.visible)
+    }
+  }
+}
+
+struct LanguageSelectionSheet: View {
+  @Binding var isPresented: Bool
+  @EnvironmentObject var appSettingsService: AppSettingsService
+  
+  var body: some View {
+    VStack(spacing: Adaptive.adaptive(20)) {
+      Text("Language")
+        .font(.inter(weight: .semibold, size: 20))
+        .padding(.top, 24)
+        .padding(.bottom, 8)
+      
+      VStack(spacing: 0) {
+        languageRow(title: "English", value: "en")
+        Divider()
+        languageRow(title: "Українська", value: "uk")
+      }
+      .background {
+        RoundedRectangle(cornerRadius: 16, style: .continuous)
+          .fill(Color.gray.opacity(0.08))
+      }
+      .padding(.horizontal, Adaptive.adaptive(24))
+      
+      Spacer()
+    }
+  }
+  
+  private func languageRow(title: LocalizedStringKey, value: String) -> some View {
+    Button {
+      appSettingsService.appLanguage = value
+      isPresented = false
+    } label: {
+      HStack {
+        Text(title)
+          .font(.inter(weight: .semibold, size: 16))
+          .foregroundStyle(.black)
+        Spacer()
+        if appSettingsService.appLanguage == value {
+          Image(systemName: "checkmark")
+            .foregroundStyle(Color.blue)
+            .font(.system(size: 16, weight: .bold))
+        }
+      }
+      .padding(.vertical, Adaptive.adaptive(16))
+      .padding(.horizontal, Adaptive.adaptive(20))
+      .contentShape(Rectangle())
     }
   }
 }

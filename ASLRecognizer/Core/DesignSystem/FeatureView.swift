@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct FeatureView: View {
-  let title: String
-  let subTitle: String
+  let title: LocalizedStringKey
+  let subTitle: LocalizedStringKey
   let image: ImageResource
   
   var body: some View {

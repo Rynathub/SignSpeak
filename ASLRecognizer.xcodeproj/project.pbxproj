@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		EB9AAB842F9181A0008F4784 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = EB9AAB832F9181A0008F4784 /* Localizable.xcstrings */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		EB7436002F5F62D800E2F23D /* ASLRecognizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ASLRecognizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB9AAB832F9181A0008F4784 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,6 +50,7 @@
 		EB7435F72F5F62D800E2F23D = {
 			isa = PBXGroup;
 			children = (
+				EB9AAB832F9181A0008F4784 /* Localizable.xcstrings */,
 				EB7436022F5F62D800E2F23D /* ASLRecognizer */,
 				EB7436262F60051E00E2F23D /* Frameworks */,
 				EB7436012F5F62D800E2F23D /* Products */,
@@ -112,6 +118,7 @@
 			knownRegions = (
 				en,
 				Base,
+				uk,
 			);
 			mainGroup = EB7435F72F5F62D800E2F23D;
 			minimizedProjectReferenceProxies = 1;
@@ -130,6 +137,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB9AAB842F9181A0008F4784 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +213,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -261,6 +270,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

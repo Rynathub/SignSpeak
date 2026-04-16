@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct SettingsSection: View {
-  let title: String
+  let title: LocalizedStringKey
   let settingsItems: [SettingsItem]
   
   var body: some View {
     VStack(alignment: .leading) {
-      Text(title.uppercased())
+      Text(title)
+        .textCase(.uppercase)
         .font(.inter(weight: .semibold, size: Adaptive.adaptive(13)))
         .foregroundStyle(.gray6)
       VStack(spacing: Adaptive.adaptive(8)) {

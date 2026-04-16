@@ -18,8 +18,8 @@ struct SettingsItem: View {
   
   let style: DSSettingsItemStyle
   let icon: ImageResource
-  let title: String
-  let subTitle: String?
+  let title: LocalizedStringKey
+  let subTitle: LocalizedStringKey?
   let action: (() -> Void)
   
   var body: some View {
@@ -32,7 +32,6 @@ struct SettingsItem: View {
         HStack(spacing: Adaptive.adaptive(12)) {
           imageView
           textView
-            .layoutPriority(1)
           Spacer(minLength: 4)
           trailingContent
         }
@@ -44,11 +43,14 @@ struct SettingsItem: View {
       Text(title)
         .font(.inter(weight: .semibold, size: Adaptive.adaptive(14)))
         .foregroundStyle(.black)
+        .multilineTextAlignment(.leading)
+        .fixedSize(horizontal: false, vertical: true)
       if let subTitle = subTitle {
         Text(subTitle)
           .font(.inter(weight: .regular, size: Adaptive.adaptive(12)))
           .foregroundStyle(.gray6)
           .multilineTextAlignment(.leading)
+          .fixedSize(horizontal: false, vertical: true)
       }
     }
   }

@@ -28,12 +28,12 @@ enum InformationSectionStyle {
 
 struct DSInformationSection: View {
   let style: InformationSectionStyle
-  let title: String
+  let title: LocalizedStringKey
   let content: InformationContent
   
   enum InformationContent {
-    case list([String])
-    case text(String)
+    case list([LocalizedStringKey])
+    case text(LocalizedStringKey)
   }
   
   var body: some View {
@@ -61,7 +61,7 @@ struct DSInformationSection: View {
         switch content {
         case .list(let items):
           VStack(alignment: .leading, spacing: Adaptive.adaptive(14)) {
-            ForEach(items, id: \.self) { item in
+            ForEach(Array(items.enumerated()), id: \.offset) { index, item in
               HStack(alignment: .top, spacing: Adaptive.adaptive(10)) {
                 Circle()
                   .fill(style.themeColor)

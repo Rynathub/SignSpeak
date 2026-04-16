@@ -10,21 +10,30 @@ import SwiftUI
 @main
 struct ASLRecognizerApp: App {
   @StateObject private var settingsService = AppSettingsService.shared
-  @State private var showGetStarted = true
   
   var body: some Scene {
     WindowGroup {
-      SignRecognitionScreen()
-        .preferredColorScheme(.light)
-        .fullScreenCover(isPresented: $showGetStarted) {
-          GetStartedScreen {
-            withAnimation(.easeInOut(duration: 0.4)) {
-              showGetStarted = false
-            }
-          }
-          .preferredColorScheme(.light)
-        }
+      AppRootView()
         .environmentObject(settingsService)
     }
+  }
+}
+
+struct AppRootView: View {
+  @EnvironmentObject var settingsService: AppSettingsService
+  @State private var showGetStarted = true
+  
+  var body: some View {
+    SignRecognitionScreen()
+      .preferredColorScheme(.light)
+      .fullScreenCover(isPresented: $showGetStarted) {
+        GetStartedScreen {
+          withAnimation(.easeInOut(duration: 0.4)) {
+            showGetStarted = false
+          }
+        }
+        .preferredColorScheme(.light)
+      }
+      .environment(\.locale, settingsService.appLanguage.isEmpty ? .current : Locale(identifier: settingsService.appLanguage))
   }
 }

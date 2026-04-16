@@ -10,15 +10,6 @@ struct SignRecognitionOutputCard: View {
           .font(.inter(weight: .semibold, size: 15))
           .foregroundStyle(.gray6)
         Spacer()
-        if !viewModel.recognizedText.isEmpty {
-          Button {
-            viewModel.clearText()
-          } label: {
-            Image(systemName: "xmark.circle.fill")
-              .foregroundStyle(.gray6.opacity(0.4))
-              .font(.system(size: 20))
-          }
-        }
       }
       Text(viewModel.recognizedText.isEmpty ? "Waiting for gestures..." : viewModel.recognizedText)
         .foregroundStyle(viewModel.recognizedText.isEmpty ? .gray6.opacity(0.5) : .black)

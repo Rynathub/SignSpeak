@@ -11,6 +11,8 @@ import SwiftUI
 enum AppButtonVariant {
   case primary
   case secondary
+  case destructive
+  case destructiveSecondary
   case text
 }
 
@@ -50,7 +52,7 @@ struct AppButtonStyle: ButtonStyle {
     switch variant {
     case .text:
       return 0
-    case .primary, .secondary:
+    case .primary, .secondary, .destructive, .destructiveSecondary:
       return Adaptive.adaptive(12)
     }
   }
@@ -59,17 +61,19 @@ struct AppButtonStyle: ButtonStyle {
     switch variant {
     case .text:
       return 0
-    case .primary, .secondary:
+    case .primary, .secondary, .destructive, .destructiveSecondary:
       return Adaptive.adaptive(24)
     }
   }
   
   private var foregroundColor: Color {
     switch variant {
-    case .primary:
+    case .primary, .destructive:
         .white
     case .secondary:
         .black
+    case .destructiveSecondary:
+        .red
     case .text:
         .brandBlue
     }
@@ -89,6 +93,18 @@ struct AppButtonStyle: ButtonStyle {
                 radius: isPressed ? 3 : 6,
                 x: 0,
                 y: isPressed ? 2 : 4)
+                
+    case .destructive:
+      RoundedRectangle(cornerRadius: 16, style: .continuous)
+        .fill(Color.red)
+        .shadow(color: Color.red.opacity(0.25),
+                radius: isPressed ? 7 : 15,
+                x: 0,
+                y: isPressed ? 5 : 10)
+        .shadow(color: Color.red.opacity(0.25),
+                radius: isPressed ? 3 : 6,
+                x: 0,
+                y: isPressed ? 2 : 4)
       
     case .secondary:
       RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -105,6 +121,22 @@ struct AppButtonStyle: ButtonStyle {
                 radius: isPressed ? 1 : 2,
                 x: 0,
                 y: isPressed ? 0 : 1)
+                
+    case .destructiveSecondary:
+      RoundedRectangle(cornerRadius: 16, style: .continuous)
+        .fill(Color.white)
+        .overlay {
+          RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .stroke(Color.red.opacity(0.15), lineWidth: 1)
+        }
+        .shadow(color: .red.opacity(0.08),
+                radius: isPressed ? 1 : 3,
+                x: 0,
+                y: isPressed ? 0 : 1)
+        .shadow(color: .red.opacity(0.08),
+                radius: isPressed ? 1 : 2,
+                x: 0,
+                y: isPressed ? 0 : 1)
       
     case .text:
       Color.clear
@@ -113,7 +145,7 @@ struct AppButtonStyle: ButtonStyle {
   
   private func scale(isPressed: Bool) -> CGFloat {
     switch variant {
-    case .primary, .secondary:
+    case .primary, .secondary, .destructive, .destructiveSecondary:
       return isPressed ? 0.985 : 1
     case .text:
       return isPressed ? 0.97 : 1
@@ -122,7 +154,7 @@ struct AppButtonStyle: ButtonStyle {
   
   private func offsetY(isPressed: Bool) -> CGFloat {
     switch variant {
-    case .primary, .secondary:
+    case .primary, .secondary, .destructive, .destructiveSecondary:
       return isPressed ? 1 : 0
     case .text:
       return 0

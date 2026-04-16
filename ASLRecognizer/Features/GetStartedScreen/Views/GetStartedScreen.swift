@@ -11,12 +11,16 @@ struct GetStartedScreen: View {
   var onGetStarted: () -> Void
   
   @State private var navigateToTutorial = false
+  @State private var navigateToSettings = false
   
   var body: some View {
     NavigationStack {
       contentView
         .navigationDestination(isPresented: $navigateToTutorial) {
           TutorialScreen(onStartAction: onGetStarted)
+        }
+        .navigationDestination(isPresented: $navigateToSettings) {
+          SettingsScreen(isPresented: $navigateToSettings, onStartRecognizing: onGetStarted)
         }
     }
   }
@@ -86,7 +90,9 @@ struct GetStartedScreen: View {
         DSButton(style: .text, width: .full) {
           Text("Settings")
             .font(.inter(weight: .semibold, size: Adaptive.adaptive(14)))
-        } action: {}
+        } action: {
+          navigateToSettings = true
+        }
       }
     }
     .padding(.horizontal, Adaptive.adaptive(16))

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsScreen: View {
   @Binding var isPresented: Bool
+  var onStartRecognizing: (() -> Void)? = nil
   @EnvironmentObject var appSettingsService: AppSettingsService
   @StateObject private var viewModel = SettingsScreenVM()
   @State var isOn: Bool = false
@@ -71,8 +72,12 @@ struct SettingsScreen: View {
     }
     .navigationDestination(isPresented: $showTutorial) {
       TutorialScreen(onStartAction: {
-        showTutorial = false
-        isPresented = false
+        if let action = onStartRecognizing {
+          action()
+        } else {
+          showTutorial = false
+          isPresented = false
+        }
       })
     }
     .sheet(isPresented: $showLanguageSheet) {

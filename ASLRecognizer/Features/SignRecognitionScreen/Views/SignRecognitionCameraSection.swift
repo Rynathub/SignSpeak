@@ -26,6 +26,18 @@ struct SignRecognitionCameraSection: View {
           .animation(.easeInOut(duration: 0.2), value: viewModel.currentLetter)
       }
     }
+    .overlay(alignment: .topLeading) {
+      Button {
+        viewModel.isTorchOn.toggle()
+      } label: {
+        Image(systemName: viewModel.isTorchOn ? "bolt.fill" : "bolt.slash.fill")
+          .font(.system(size: 20))
+          .foregroundStyle(.white)
+          .padding(Adaptive.adaptive(12))
+          .background(Color.black.opacity(0.4).clipShape(Circle()))
+          .padding(Adaptive.adaptive(12))
+      }
+    }
     .padding(.horizontal, Adaptive.adaptive(16))
   }
 }

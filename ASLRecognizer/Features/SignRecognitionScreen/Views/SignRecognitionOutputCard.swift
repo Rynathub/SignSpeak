@@ -11,8 +11,15 @@ struct SignRecognitionOutputCard: View {
           .foregroundStyle(.gray6)
         Spacer()
       }
-      Text(viewModel.recognizedText.isEmpty ? String(localized: "Waiting for gestures...") : viewModel.recognizedText)
-        .foregroundStyle(viewModel.recognizedText.isEmpty ? .gray6.opacity(0.5) : .black)
+      Group {
+        if viewModel.recognizedText.isEmpty {
+          Text("Waiting for gestures...")
+            .foregroundStyle(.gray6.opacity(0.5))
+        } else {
+          Text(verbatim: viewModel.recognizedText)
+            .foregroundStyle(.black)
+        }
+      }
         .font(.inter(weight: .regular, size: 16))
         .frame(maxWidth: .infinity, alignment: .leading)
         .multilineTextAlignment(.leading)

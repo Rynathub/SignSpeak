@@ -9,6 +9,7 @@ import SwiftUI
 import CoreImage
 import Combine
 import Vision
+import AVFoundation
 
 class SignRecognitionScreenVM: ObservableObject {
   
@@ -16,6 +17,11 @@ class SignRecognitionScreenVM: ObservableObject {
   @Published var currentFrame: CGImage?
   @Published var handDetected: Bool = false
   @Published var hands: [[String: CGPoint]] = []
+  @Published var isTorchOn: Bool = false {
+    didSet {
+      toggleTorch(on: isTorchOn)
+    }
+  }
   
   // Classification output
   @Published var recognizedText: String = ""
@@ -56,7 +62,6 @@ class SignRecognitionScreenVM: ObservableObject {
   }
   
   // MARK: - Lifecycle Controls
-  
   func startCamera() {
     cameraService.start()
   }
@@ -129,7 +134,6 @@ class SignRecognitionScreenVM: ObservableObject {
       return nil
     }
     
-    // Add to buffer
     predictionBuffer.append(label)
     
     // Keep buffer at fixed size
@@ -146,19 +150,32 @@ class SignRecognitionScreenVM: ObservableObject {
       return nil
     }
     
-    // Don't commit the same letter twice in a row
     guard topLabel != lastCommittedLabel else {
       return nil
     }
     
-    // Commit!
     lastCommittedLabel = topLabel
     predictionBuffer.removeAll()
     return topLabel
   }
   
+  // MARK: - Torch
+  func toggleTorch(on: Bool) {
+    guard let device = AVCaptureDevice.default(for: .video) else { return }
+    
+    if device.hasTorch {
+      do {
+        try device.lockForConfiguration()
+        device.torchMode = on ? .on : .off
+        device.unlockForConfiguration()
+      } catch {
+        print("Torch could not be used")
+      }
+    } else {
+      print("Torch is not available")
+    }
+  }
   // MARK: - Text Manipulation
-  
   @MainActor
   private func applyLetter(_ letter: String) {
     switch letter.lowercased() {

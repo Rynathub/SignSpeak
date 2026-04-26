@@ -17,3 +17,47 @@ workflows:
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
             -destination 'generic/platform=iOS Simulator'
+
+  ios-testflight:
+    name: iOS TestFlight Build
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    integrations:
+      app_store_connect: app_store_connect_key
+
+    environment:
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.rynat.ASLRecognizer
+
+      vars:
+        XCODE_PROJECT: "ASLRecognizer.xcodeproj"
+        XCODE_SCHEME: "ASLRecognizer"
+
+    scripts:
+      - name: Set up code signing
+        script: |
+          keychain initialize
+          xcode-project use-profiles
+
+      - name: Increment build number
+        script: |
+          agvtool new-version -all $CM_BUILD_NUMBER
+
+      - name: Build ipa
+        script: |
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

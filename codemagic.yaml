@@ -37,9 +37,13 @@ workflows:
         XCODE_SCHEME: "ASLRecognizer"
 
     scripts:
-      - name: Set up code signing
+      - name: Set up code signing identities
         script: |
           keychain initialize
+          keychain add-certificates
+          
+      - name: Set up code signing
+        script: |
           xcode-project use-profiles
 
       - name: Increment build number

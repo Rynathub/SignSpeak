@@ -26,6 +26,15 @@ workflows:
     integrations:
       app_store_connect: ASLRecognizer_Key
 
+    triggering:
+      events:
+        - push
+
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+
     environment:
       xcode: latest
       ios_signing:

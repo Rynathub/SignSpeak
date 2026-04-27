@@ -3,7 +3,7 @@
 //  ASLRecognizer
 //
 //  Created by Rynat Shakirov on 15.04.2026.
-//
+//dasd
 
 import Combine
 import SwiftUI

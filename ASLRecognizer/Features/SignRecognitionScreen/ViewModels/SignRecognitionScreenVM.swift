@@ -31,13 +31,9 @@ class SignRecognitionScreenVM: ObservableObject {
   // MARK: - Private
   private let cameraService = CameraService()
   private let classifier = SignClassifier()
-  
-  // Stability buffer: stores recent predictions
-  private var predictionBuffer: [String] = []
-  private let bufferSize = 15
-  private let stabilityThreshold = 10  // Must appear ≥10 times in buffer to register
-  private var lastCommittedLabel: String? = nil
-  
+  private let textReducer = RecognizerTextReducer()
+  private var predictionStabilizer = PredictionStabilizer()
+    
   // Pairs of joints to connect with lines (skeleton)
   static let connectionPairs: [(String, String)] = [
     // Thumb
@@ -127,36 +123,7 @@ class SignRecognitionScreenVM: ObservableObject {
   
   /// Adds a prediction to the buffer and returns a committed letter if stable
   private func processStabilityBuffer(label: String) -> String? {
-    // Ignore "nothing" — don't add to buffer, but reset tracking
-    guard !label.isEmpty, label != "nothing" else {
-      predictionBuffer.removeAll()
-      lastCommittedLabel = nil
-      return nil
-    }
-    
-    predictionBuffer.append(label)
-    
-    // Keep buffer at fixed size
-    if predictionBuffer.count > bufferSize {
-      predictionBuffer.removeFirst()
-    }
-    
-    // Count occurrences of the most frequent label
-    let counts = Dictionary(grouping: predictionBuffer, by: { $0 })
-      .mapValues { $0.count }
-    
-    guard let (topLabel, topCount) = counts.max(by: { $0.value < $1.value }),
-          topCount >= stabilityThreshold else {
-      return nil
-    }
-    
-    guard topLabel != lastCommittedLabel else {
-      return nil
-    }
-    
-    lastCommittedLabel = topLabel
-    predictionBuffer.removeAll()
-    return topLabel
+    predictionStabilizer.process(label: label)
   }
   
   // MARK: - Torch
@@ -178,16 +145,7 @@ class SignRecognitionScreenVM: ObservableObject {
   // MARK: - Text Manipulation
   @MainActor
   private func applyLetter(_ letter: String) {
-    switch letter.lowercased() {
-    case "space":
-      recognizedText.append(" ")
-    case "del":
-      if !recognizedText.isEmpty {
-        recognizedText.removeLast()
-      }
-    default:
-      recognizedText.append(letter.uppercased())
-    }
+    recognizedText = textReducer.reduce(text: recognizedText, letter: letter)
     
     if AppSettingsService.shared.hapticFeedbackOn {
       UIImpactFeedbackGenerator(style: .soft).impactOccurred()
@@ -197,8 +155,7 @@ class SignRecognitionScreenVM: ObservableObject {
   @MainActor
   func clearText() {
     recognizedText = ""
-    predictionBuffer.removeAll()
-    lastCommittedLabel = nil
+    predictionStabilizer.reset()
   }
   
   /// Extracts all 21 joint points for each detected hand
